@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="help_back_text">Назад</string>
+    <string name="help_text">Помощь</string>
+    <string name="help_text_park">После нажатия на эту кнопку на карте появится маркер, с помощью которого вы можете закрепить место парковки. После этого вы можете оставить заметку или фото.</string>
+    <string name="help_text_car">После того, как вы припаркуете машину, вы можете просмотреть оставленную вами заметку.</string>
+    <string name="help_text_gps">Нажмите на эту кнопку, чтобы найти себя на карте.</string>
+    <string name="help_text_compass">Кликните на эту кнопку, чтобы построить маршрут до своей машины.</string>
+    <string name="help_get_permission_next">Далее</string>
+    <string name="settings_button_history">История</string>
+    <string name="permission_camera_warning">Камера недоступна. Пожалуйста, чтобы использовать камеру, дайте разрешение на её использование в настройках.\n\n</string>
+    <string name="permission_location_warning">Нет доступа к сервису геолокации. Пожалуйста, чтобы использовать геолокацию, дайте разрешение на её использование в настройках.</string>
+    <string name="settings_theme_switch_light">Тема: Светлая</string>
+    <string name="settings_theme_switch_dark">Тема: Темная</string>
+    <string name="help_text_permission_description">Чтобы пользоваться всем функционалом приложения, разрешите доступ к геолокации и камере.</string>
+    <string name="first_launch">Первый запуск</string>
+    <string name="description">Описание</string>
+    <string name="help_get_permission_start">Начать</string>
+    <string name="apply_changes">Применить изменеия</string>
+    <string name="functional_is_limited_text">Функциональность приложения ограничена. Пожалуйста, предоставьте разрешения к необходимым службам в настройках.</string>
+    <string name="parking_information">Информация о парковке</string>
+    <string name="toast_camera_perm">Разрешите использовать камеру в настройках</string>
+    <string name="Geolocation_is_disabled">Геолокация выключена</string>
+    <string name="Enable_geolocation_text">Включите геолокацию в настройках вашего телефона, чтобы приложение показывало ваше местоположение</string>
+    <string name="empty">Пусто</string>
+    <string name="save">Сохранить</string>
+    <string name="address">Адрес</string>
+    <string name="beginning">Начало</string>
+    <string name="end">Конец</string>
+    <string name="note">Заметка</string>
+    <string name="photo">Фото</string>
+    <string name="location_on_the_map">Местоположение на карте</string>
+    <string name="latitude">Широта</string>
+    <string name="longitude">Долгота</string>
+</resources>
