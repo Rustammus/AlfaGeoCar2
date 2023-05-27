@@ -1,6 +1,7 @@
 package com.example.alfabet_01
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -11,8 +12,11 @@ import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -64,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("b11ae79f-43cf-49cd-849a-d8f84e060c8a")
+        MapKitFactory.setLocale("en_US")
         MapKitFactory.initialize(this)
         val isFirstLaunch = intent.getBooleanExtra("key", false)
         setContentView(R.layout.activity_main)
@@ -121,6 +126,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("Tag", "Dark theme")
             mapview.map.isNightModeEnabled = true
         }
+        createTimerFun()
     }
 
     override fun onStop () {
@@ -146,6 +152,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun createTimerFun() {
+        val handlerThread = HandlerThread("MyHandlerThread")
+        handlerThread.start()
+
+        val handler = Handler(handlerThread.looper)
+        val delay = 5000 // 5 секунд
+
+        val runnable = object : Runnable {
+            override fun run() {
+                //Log.d("Tag", "Прошло 5 секунд")
+                handler.postDelayed(this, delay.toLong())
+            }
+        }
+
+        handler.postDelayed(runnable, delay.toLong())
+    }
+
     private fun modelListToStringSet(): MutableSet<String> {
         val stringSet = mutableSetOf<String>()
         for (i in modelList) {
@@ -167,7 +190,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Tag", lines.size.toString())
                 if (lines.size != 5) continue
                 val date = formatStringToDate(lines[4])!!
-                modelList.add(Model(lines[0].toDouble(), lines[1].toDouble(), lines[2], lines[3], date, SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(date)), )
+                val imgUriString = if (lines[3] == "null") null else lines[3]
+                modelList.add(Model(lines[0].toDouble(), lines[1].toDouble(), lines[2], imgUriString, date, SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(date)), )
             }
         }
     }
@@ -272,6 +296,7 @@ class MainActivity : AppCompatActivity() {
             builder.setPositiveButton("OK"){ _, _ ->
                 Log.d("Tag", "Positive")
             }
+
             builder.show()
         }
 
@@ -283,6 +308,9 @@ class MainActivity : AppCompatActivity() {
 
 
     fun onClickSettings(view: View) {
+
+        //с
+
         val intent = Intent(this, SettingsActivity::class.java)
         intent.putExtra("qwerty", modelList)
         launcherSettings?.launch(intent)
@@ -294,6 +322,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickGPS(view: View) {
+        checkGpsOn()
         getLocation()
         subscribeLocationUpdates()
     }
@@ -353,7 +382,9 @@ class MainActivity : AppCompatActivity() {
             val datetime = Calendar.getInstance().time
             val dateString = SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(datetime)
             modelList.add(Model(lastCarPoint.latitude, lastCarPoint.longitude, descriptionText, lastImgPath, datetime, dateString))
+            lastImgUri = null
             findViewById<ConstraintLayout>(R.id.constrDescrInput).visibility = View.GONE
+            findViewById<ImageButton>(R.id.imageButton4).setImageResource(R.drawable.img_compass_active)
         }
 
     }

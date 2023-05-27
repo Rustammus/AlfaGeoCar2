@@ -3,6 +3,7 @@ package com.example.alfabet_01
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.example.alfabet_01.databinding.ActivityParkinExtendedBinding
 
@@ -27,10 +28,14 @@ class ParkingExtendedActivity : AppCompatActivity() {
         with (binding) {
             textViewBeginning.text = model.dateString
             textViewNote.text = model.text
-            imageView10.setImageURI(Uri.parse(model.imgPath))
             textViewLatitude.text = model.latitude.toString()
             textViewLongitude.text = model.longitude.toString()
         }
+        if (!model.imgPath.isNullOrEmpty()) binding.imageView10.setImageURI(Uri.parse(model.imgPath))
+        else {
+            binding.cardViewPhoto.visibility = View.GONE
+        }
+
     }
 
     fun onClickBack(view: View) {

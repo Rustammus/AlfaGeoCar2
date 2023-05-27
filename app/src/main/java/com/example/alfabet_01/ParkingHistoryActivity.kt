@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.net.toFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.alfabet_01.databinding.ActivityParkinHistoryBinding
 import java.io.File
@@ -30,7 +31,6 @@ class ParkingHistoryActivity : AppCompatActivity() {
         if (modelList.isNullOrEmpty()) {
             setEmptyInvis()
         } else {
-            modelList.reverse()
             historyAdapter.addModel(modelList)
             binding.recyclerHistory.layoutManager = LinearLayoutManager(this)
             binding.recyclerHistory.adapter = historyAdapter
@@ -57,18 +57,24 @@ class ParkingHistoryActivity : AppCompatActivity() {
             setEmptyInvis()
             modelListGL = null
         }
+        //fileDelete("file:///data/user/0/com.example.alfabet_01/files/picture_1685027604874.jpg")
     }
 
     private fun fileDelete(uriString: String) {
-        Log.d("Tag", uriString)
-        val path = Uri.parse(uriString).path
-        Log.d("Tag", path!!)
-        val fdelete = File(path)
-        if (fdelete.exists()) {
+        var fileUri = Uri.parse(uriString)
+        val path = Uri.fromFile(filesDir).toString() + "/" + fileUri.lastPathSegment
+        Log.d("Tag", path)
+        fileUri = Uri.parse(path)
+
+
+
+        if (fileUri != null) {
+            val fdelete = fileUri.toFile()
+            if (fdelete.exists()) {
                 if (fdelete.delete()) Log.d("Tag", "File delete")
                 else Log.d("Tag", "File not delete")
+            } else Log.d("Tag", "File not exist")
         }
-        else Log.d("Tag", "File not exist")
 
     }
 

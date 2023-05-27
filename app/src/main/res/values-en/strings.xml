@@ -1,0 +1,48 @@
+<resources>
+    <string name="help_back_text">Back</string>
+    <string name="help_text">Help</string>
+    <string name="help_text_park">After clicking, a label will appear with which you can make parking. Also, you can leave notes or photos.</string>
+    <string name="help_text_car">After parking the car, you can look at the note that you left.</string>
+    <string name="help_text_gps">Click to determine your position.</string>
+    <string name="help_text_compass">Click to plot a route from you to the car.</string>
+    <string name="help_get_permission_next">Next</string>
+    <string name="settings_button_history">History</string>
+    <string name="permission_camera_warning">The camera is not available. There is no way to use the camera to create a photo.\n</string>
+    <string name="permission_location_warning">Current geolocation is not available.</string>
+    <string name="settings_theme_switch_light">Theme: Light</string>
+    <string name="settings_theme_switch_dark">Theme: Dark</string>
+    <string name="help_text_permission_description">To use all the functionality of the application, allow access to geolocation and camera.</string>
+    <string name="first_launch">First launch</string>
+    <string name="description">Description</string>
+    <string name="help_get_permission_start">Start</string>
+    <string name="apply_changes">Apply changes</string>
+    <string name="functional_is_limited_text">The functionality is limited.</string>
+    <string name="parking_information">Parking Information</string>
+    <string name="toast_camera_perm">Allow using the camera in the settings</string>
+    <string name="Geolocation_is_disabled">Geolocation is disabled</string>
+    <string name="Enable_geolocation_text">Enable geolocation in your phone settings so that the app will show your location</string>
+    <string name="empty">Empty</string>
+    <string name="save">Save</string>
+    <string name="address">Address</string>
+    <string name="beginning">Beginning</string>
+    <string name="end">End</string>
+    <string name="note">Note</string>
+    <string name="photo">Photo</string>
+    <string name="location_on_the_map">Location on the map</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="language">Language</string>
+    <string name="en">English</string>
+    <string name="ru">Russian</string>
+    <string name="help_big_text">При парковке:\n
+  →  Определите, с какого въезда вы заехали и примерно оцените расстояние от него\n
+  →  Если на картах присутствует детализированная прорисовка паркинга/тц, на котором вы находитесь, используйте опорные точки (например, входы/выходы из паркинга/тц, в котором вы находитесь), чтобы поставить маркер с высокой точностью\n
+  →  Если паркинг использует маркировку мест, запишите/сфотаграфируйте номер места, где вы припарковали свой автомобиль\n
+  →  При фотографии автомобиля пытайтесь запечатлеть опорные точки\n
+  →  При написании заметки не забудьте указать этаж, на котором находится автомобиль и время въезда в паркинг, если он является платным\n
+\n
+При поиске авто:\n
+  →  Пытайтесь следовать к автомобилю по тому же пути, как от него уходили\n
+  →  Если на паркинге имеется маркировка мест, воспользуйтесь ей: стоя у ближайшего маркера найдите любой маркер, находящийся от вас по диагонали (на одно место вперёд и на одно место в сторону) - так вы поймёте в какую сторону вам нужно двигаться, чтобы найти свой автомобиль //Сюда можно вставить алфавит, чтобы человеку было проще быстро понимать, куда двигаться\n
+  →  Если в вашем паркинге плохо работают службы геолокации, не полагайтесь на автоматически построенный маршрут - он может запутать вас</string>
+</resources>

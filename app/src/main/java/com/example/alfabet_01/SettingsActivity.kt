@@ -2,15 +2,20 @@ package com.example.alfabet_01
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Switch
+import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+
+import java.util.Locale
+
 
 class SettingsActivity : AppCompatActivity() {
     private var modelList :  ArrayList<Model>? = null
@@ -24,6 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             intent.getSerializableExtra("qwerty") as ArrayList<Model>?
         }
+        modelList?.reverse()
 
         launcherHistory = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 result: ActivityResult ->
@@ -38,6 +44,7 @@ class SettingsActivity : AppCompatActivity() {
                 Log.d("Tag", "Reverted from History")
             }
         }
+        Log.d("Tag", "Settings onCreate")
     }
 
 
@@ -55,18 +62,33 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun onClickHistory(view: View) {
+        val dsd = ParkingHistoryActivity::class.java
         val intent = Intent(this, ParkingHistoryActivity::class.java)
         if (!modelList.isNullOrEmpty()) intent.putExtra("qwerty", modelList)
         launcherHistory?.launch(intent)
     }
 
-    fun onClickThemeSwitch(view: View) {
-        val swith = findViewById<Switch>(R.id.switch1)
-        if (swith.isActivated) swith.setText(R.string.settings_theme_switch_dark)
-        else swith.setText(R.string.settings_theme_switch_light)
+
+    fun onClickEn(view: View) {
+        this.resources.configuration.setLocale(Locale("en", "US"))
+        this.onConfigurationChanged(this.resources.configuration)
     }
 
+    fun onClickRu(view: View) {
+        this.resources.configuration.setLocale(Locale("ru", "RU"))
+        this.onConfigurationChanged(this.resources.configuration)
+        //this.resources.getQuantityString()
+        findViewById<TextView>(R.id.textView20).setText(R.string.language)
+    }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d("TagZ", "Conf update")
+
+        findViewById<TextView>(R.id.textView20).text = resources.getString(R.string.language)
+
+
+    }
 
 
 }

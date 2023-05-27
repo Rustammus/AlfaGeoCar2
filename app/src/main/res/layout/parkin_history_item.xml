@@ -33,15 +33,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="0.6"
+                android:minWidth="90dp"
                 app:srcCompat="@drawable/img_tag" />
 
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="32dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="TextView"

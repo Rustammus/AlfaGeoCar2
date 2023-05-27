@@ -134,7 +134,8 @@
                         android:id="@+id/descrTextInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/description"
+                        android:hint="@string/note"
+                        android:textColor="@color/text_color"
                         tools:ignore="TouchTargetSizeCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
             </androidx.cardview.widget.CardView>
