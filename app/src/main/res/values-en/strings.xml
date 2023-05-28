@@ -34,15 +34,22 @@
     <string name="language">Language</string>
     <string name="en">English</string>
     <string name="ru">Russian</string>
-    <string name="help_big_text">При парковке:\n
-  →  Определите, с какого въезда вы заехали и примерно оцените расстояние от него\n
-  →  Если на картах присутствует детализированная прорисовка паркинга/тц, на котором вы находитесь, используйте опорные точки (например, входы/выходы из паркинга/тц, в котором вы находитесь), чтобы поставить маркер с высокой точностью\n
-  →  Если паркинг использует маркировку мест, запишите/сфотаграфируйте номер места, где вы припарковали свой автомобиль\n
-  →  При фотографии автомобиля пытайтесь запечатлеть опорные точки\n
-  →  При написании заметки не забудьте указать этаж, на котором находится автомобиль и время въезда в паркинг, если он является платным\n
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="clear_history_alert">Clear parking history?</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
+    <string name="settings_toast">Changes will take effect after restarting</string>
+    <string name="help_big_text">When parking:\n
+  →  Determine which entrance you came from and roughly estimate the distance from it\n
+  →  If there is a detailed drawing of the parking lot/shopping center where you are located on the maps, use reference points (for example, entrances/exits from the parking lot/ shopping center where you are located) to put a marker with high accuracy\n
+  →  If the parking lot uses the marking of places, write down/take a picture of the number of the place where you parked your car\n
+  →  When photographing a car, try to capture the reference points\n
+  →  When writing a note, do not forget to specify the floor where the car is located and the time of entry to the parking lot, if it is paid\n
 \n
-При поиске авто:\n
-  →  Пытайтесь следовать к автомобилю по тому же пути, как от него уходили\n
-  →  Если на паркинге имеется маркировка мест, воспользуйтесь ей: стоя у ближайшего маркера найдите любой маркер, находящийся от вас по диагонали (на одно место вперёд и на одно место в сторону) - так вы поймёте в какую сторону вам нужно двигаться, чтобы найти свой автомобиль //Сюда можно вставить алфавит, чтобы человеку было проще быстро понимать, куда двигаться\n
-  →  Если в вашем паркинге плохо работают службы геолокации, не полагайтесь на автоматически построенный маршрут - он может запутать вас</string>
+When searching for a car:\n
+  →  Try to follow the same path to the car as you left it\n
+  →  If there is a marking of places in the parking lot, use it: standing at the nearest marker, find any marker that is diagonally away from you (one place forward and one place to the side) - so you will understand which way you need to move to find your car\n
+  →  If geolocation services are not working well in your parking lot, do not rely on an automatically built route - it can confuse you</string>
 </resources>

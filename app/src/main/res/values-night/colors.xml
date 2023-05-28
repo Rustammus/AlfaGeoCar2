@@ -12,4 +12,5 @@
     <color name="text_color">#FFFFFFFF</color>
     <color name="button_color">#FF6F7F9A</color>
     <color name="card_color">#FF797979</color>
+    <color name="plot_color">#FFFFFFFF</color>
 </resources>

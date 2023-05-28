@@ -25,23 +25,28 @@
         tools:targetApi="31">
         <activity
             android:name=".ParkingExtendedActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="locale|uiMode"/>
         <activity
             android:name=".ParkingHistoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="locale|uiMode"/>
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:configChanges="locale|uiMode" />
         <activity
             android:name=".HelpActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="locale|uiMode"/>
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="locale|uiMode"/>
         <activity
             android:name=".LoadingActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="locale|uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

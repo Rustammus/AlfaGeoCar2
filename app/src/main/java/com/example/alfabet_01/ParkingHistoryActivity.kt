@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.alfabet_01.databinding.ActivityParkinHistoryBinding
@@ -47,17 +48,25 @@ class ParkingHistoryActivity : AppCompatActivity() {
     }
     fun onClickDeleteAll(view: View) {
 
-        if (!modelListGL.isNullOrEmpty()) {
-            historyAdapter.deleteAll()
-            for (i in modelListGL!!.indices) {
-                if (modelListGL!![i].imgPath != null) {
-                    fileDelete(modelListGL!![i].imgPath!!)
-                }
-            }
-            setEmptyInvis()
-            modelListGL = null
-        }
+
         //fileDelete("file:///data/user/0/com.example.alfabet_01/files/picture_1685027604874.jpg")
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(R.string.clear_history_alert)
+        dialogBuilder.setPositiveButton(R.string.clear) {_, _ ->
+            if (!modelListGL.isNullOrEmpty()) {
+                historyAdapter.deleteAll()
+                for (i in modelListGL!!.indices) {
+                    if (modelListGL!![i].imgPath != null) {
+                        fileDelete(modelListGL!![i].imgPath!!)
+                    }
+                }
+                setEmptyInvis()
+                modelListGL = null
+            }
+        }
+        dialogBuilder.setNegativeButton(R.string.cancel) {_, _ ->}
+        dialogBuilder.show()
     }
 
     private fun fileDelete(uriString: String) {

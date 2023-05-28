@@ -1,7 +1,6 @@
 package com.example.alfabet_01
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -10,13 +9,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.LocationManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -25,6 +22,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -33,24 +31,36 @@ import com.google.android.material.textfield.TextInputEditText
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.RequestPoint
+import com.yandex.mapkit.RequestPointType
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
+import com.yandex.mapkit.geometry.SubpolylineHelper
 import com.yandex.mapkit.location.FilteringMode
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.location.LocationListener
 import com.yandex.mapkit.location.Location
+import com.yandex.mapkit.location.LocationListener
 import com.yandex.mapkit.location.LocationStatus
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObject
+import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.transport.TransportFactory
+import com.yandex.mapkit.transport.masstransit.PedestrianRouter
+import com.yandex.mapkit.transport.masstransit.Route
+import com.yandex.mapkit.transport.masstransit.SectionMetadata
+import com.yandex.mapkit.transport.masstransit.Session
+import com.yandex.mapkit.transport.masstransit.TimeOptions
+import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
-import java.util.Calendar
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Session.RouteListener {
 
     lateinit var mapview: MapView
     private lateinit var mapKit: MapKit
@@ -62,14 +72,20 @@ class MainActivity : AppCompatActivity() {
     private var lastImgUri: Uri? = null
     private lateinit var tapLis: MapObjectTapListener
     private var rewriteDescription = false
+    lateinit var mtRouter: PedestrianRouter
     lateinit var car: PlacemarkMapObject
+    private lateinit var mapObjects: MapObjectCollection
+
     var state = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("b11ae79f-43cf-49cd-849a-d8f84e060c8a")
         MapKitFactory.setLocale("en_US")
         MapKitFactory.initialize(this)
+        TransportFactory.initialize(this)
         val isFirstLaunch = intent.getBooleanExtra("key", false)
         setContentView(R.layout.activity_main)
         mapview = findViewById(R.id.mapview)
@@ -81,6 +97,8 @@ class MainActivity : AppCompatActivity() {
 
         val location = mapKit.createUserLocationLayer(mapview.mapWindow)
         location.isVisible = true
+
+        mapObjects = mapview.map.mapObjects.addCollection()
 
         launcherCam = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 result: ActivityResult ->
@@ -147,7 +165,7 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun saveModelList() {
-        val pref = getPreferences(MODE_PRIVATE).edit(commit = true) {
+        val pref = getSharedPreferences("pref", MODE_PRIVATE).edit(commit = true) {
             this.putStringSet("savedData", modelListToStringSet())
         }
     }
@@ -181,7 +199,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadModeList() {
-        val modelListStringSet = getPreferences(MODE_PRIVATE).getStringSet("savedData", mutableSetOf<String>())
+        val modelListStringSet = getSharedPreferences("pref", MODE_PRIVATE).getStringSet("savedData", mutableSetOf<String>())
         if (!modelListStringSet.isNullOrEmpty()) {
             val readModelList = ArrayList<Model>()
             Log.d("Tag", modelListStringSet.size.toString())
@@ -191,7 +209,16 @@ class MainActivity : AppCompatActivity() {
                 if (lines.size != 5) continue
                 val date = formatStringToDate(lines[4])!!
                 val imgUriString = if (lines[3] == "null") null else lines[3]
-                modelList.add(Model(lines[0].toDouble(), lines[1].toDouble(), lines[2], imgUriString, date, SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(date)), )
+                modelList.add(0,
+                    Model(
+                        lines[0].toDouble(),
+                        lines[1].toDouble(),
+                        lines[2],
+                        imgUriString,
+                        date,
+                        SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(date)
+                    )
+                )
             }
         }
     }
@@ -323,8 +350,14 @@ class MainActivity : AppCompatActivity() {
 
     fun onClickGPS(view: View) {
         checkGpsOn()
-        getLocation()
-        subscribeLocationUpdates()
+        //getLocation()
+        if (currentLocation.latitude == 0.0) {
+            subscribeLocationUpdates()
+        } else {
+            mapview.map.move(CameraPosition(currentLocation, 20.0f, 0.0f, 0.0f),
+                Animation(Animation.Type.SMOOTH, 3f), null)
+        }
+
     }
 
     fun onClickParking(view: View) {
@@ -333,8 +366,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickCompass(view: View) {
-        if (lastCarPoint.latitude != 0.0) {
-            mapview.map.move(CameraPosition(lastCarPoint, 20.0f, 0.0f, 0.0f), Animation(Animation.Type.SMOOTH, 3f), null)
+        if ((currentLocation.latitude != 0.0) and (lastCarPoint.latitude != 0.0)) {
+            createRoute(currentLocation, lastCarPoint)
         }
     }
 
@@ -344,7 +377,7 @@ class MainActivity : AppCompatActivity() {
         setParkingImgVisibility(View.GONE)
         findViewById<ConstraintLayout>(R.id.constrDescrInput).visibility = View.VISIBLE
         findViewById<TextInputEditText>(R.id.descrTextInput).setText("")
-        findViewById<Button>(R.id.button3).text = "save"
+        findViewById<Button>(R.id.button3).setText(R.string.save)
         findViewById<ImageView>(R.id.imageView7).setImageResource(R.drawable.img_default_photo)
         var carBitMap = BitmapFactory.decodeResource(resources, R.drawable.img_car_point)
         carBitMap = Bitmap.createScaledBitmap(carBitMap, 80, 80, false)
@@ -412,6 +445,35 @@ class MainActivity : AppCompatActivity() {
         else {
             Toast.makeText(this, R.string.toast_camera_perm, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun createRoute(startPoint: Point, endPoint: Point) {
+        val options = TimeOptions()
+        val points = ArrayList<RequestPoint>()
+        points.add(RequestPoint(startPoint, RequestPointType.WAYPOINT, null))
+        points.add(RequestPoint(endPoint, RequestPointType.WAYPOINT, null))
+        mtRouter = TransportFactory.getInstance().createPedestrianRouter()
+        mtRouter.requestRoutes(points, options, this)
+    }
+
+    override fun onMasstransitRoutes(p0: MutableList<Route>) {
+
+        // In this example we consider first alternative only
+        if (p0.size > 0) {
+            for (section in p0[0].sections) {
+                drawSection(
+                    SubpolylineHelper.subpolyline(p0[0].geometry, section.geometry)
+                )
+            }
+        }
+    }
+
+    override fun onMasstransitRoutesError(p0: Error) {
+    }
+
+    private fun drawSection(geometry: Polyline) {
+        val polylineMapObject = mapObjects.addPolyline(geometry)
+        polylineMapObject.setStrokeColor(R.color.plot_color)
     }
 
 }
