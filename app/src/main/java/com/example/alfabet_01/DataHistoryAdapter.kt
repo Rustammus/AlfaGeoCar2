@@ -29,6 +29,7 @@ class DataHistoryAdapter: RecyclerView.Adapter<DataHistoryAdapter.DataHistoryHol
                 it.context.startActivity(intent)
             }
 
+
         }
     }
 

@@ -38,6 +38,10 @@ class ParkingExtendedActivity : AppCompatActivity() {
 
     }
 
+    fun onClickDeleteItem(view: View) {
+
+    }
+
     fun onClickBack(view: View) {
         finish()
     }

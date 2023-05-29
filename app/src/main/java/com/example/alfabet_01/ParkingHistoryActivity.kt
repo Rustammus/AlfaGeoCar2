@@ -88,10 +88,14 @@ class ParkingHistoryActivity : AppCompatActivity() {
     }
 
     fun onClickBack(view: View) {
+        finish()
+    }
+
+    override fun onDestroy() {
         val i = Intent()
         i.putExtra("modelListFromHistory", modelListGL)
         setResult(RESULT_OK, i)
-        finish()
+        super.onDestroy()
     }
 
 }

@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -49,7 +50,6 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.transport.TransportFactory
 import com.yandex.mapkit.transport.masstransit.PedestrianRouter
 import com.yandex.mapkit.transport.masstransit.Route
-import com.yandex.mapkit.transport.masstransit.SectionMetadata
 import com.yandex.mapkit.transport.masstransit.Session
 import com.yandex.mapkit.transport.masstransit.TimeOptions
 import com.yandex.runtime.Error
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     lateinit var car: PlacemarkMapObject
     private lateinit var mapObjects: MapObjectCollection
 
-    var state = false
+    var isCarOnMap = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
                 }
                 else {
                     modelList.clear()
+                    if (isCarOnMap) car.parent.remove(car)
                     Log.d("Tag", "modelList is clear")
                 }
                 saveModelList()
@@ -134,6 +135,9 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
                 //Log.d("Tag", "TUPTUTPTUP!!!!!")
                 findViewById<ConstraintLayout>(R.id.constrDescrInput).visibility = View.VISIBLE
                 findViewById<Button>(R.id.button3).setText(R.string.apply_changes)
+                val noteText = modelList.last().text.toCharArray()
+                findViewById<TextInputEditText>(R.id.descrTextInput).setText(noteText, 0, noteText.size)
+                findViewById<ImageView>(R.id.imageView7).setImageURI(lastImgUri)
                 rewriteDescription = true
                 return true
             }
@@ -148,6 +152,7 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     }
 
     override fun onStop () {
+        saveModelList()
         super.onStop()
         mapview.onStop()
         MapKitFactory.getInstance().onStop()
@@ -160,8 +165,9 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         saveModelList()
+        super.onDestroy()
+
 
     }
     private fun saveModelList() {
@@ -201,7 +207,6 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     private fun loadModeList() {
         val modelListStringSet = getSharedPreferences("pref", MODE_PRIVATE).getStringSet("savedData", mutableSetOf<String>())
         if (!modelListStringSet.isNullOrEmpty()) {
-            val readModelList = ArrayList<Model>()
             Log.d("Tag", modelListStringSet.size.toString())
             for (i in modelListStringSet) {
                 val lines: List<String> = i.split("|")
@@ -219,6 +224,12 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
                         SimpleDateFormat("dd.MM.yyyy\n" + "HH:mm", Locale.getDefault()).format(date)
                     )
                 )
+                if (!modelList.isNullOrEmpty()) {
+                    val lastModel = modelList.last()
+                    lastCarPoint = Point(lastModel.latitude, lastModel.longitude)
+                    lastImgUri = if (!lastModel.imgPath.isNullOrEmpty()) Uri.parse(lastModel.imgPath) else null
+                    addCarOnMap()
+                }
             }
         }
     }
@@ -257,29 +268,27 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     }
 
     private fun isDarkMode() : Boolean {
-
         return resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
     }
 
 
 
-    private fun getLocation() {
-        val locMan = mapKit.createLocationManager()
-        val locLis: LocationListener = object : LocationListener{
-            override fun onLocationUpdated(p0: Location) {
-                Log.d("Tag", "onLocationUpdated")
-                currentLocation = p0.position
-                mapview.map.move(CameraPosition(p0.position, 20.0f, 0.0f, 0.0f),
-                    Animation(Animation.Type.SMOOTH, 3f), null)
-            }
-
-            override fun onLocationStatusUpdated(p0: LocationStatus) {
-                Log.d("Tag", "onStatusUpdated")
-            }
-        }
-        locMan.requestSingleUpdate(locLis)
-    }
+    //private fun getLocation() {
+    //    val locMan = mapKit.createLocationManager()
+    //    val locLis: LocationListener = object : LocationListener{
+    //        override fun onLocationUpdated(p0: Location) {
+    //            Log.d("Tag", "onLocationUpdated")
+    //            currentLocation = p0.position
+    //            mapview.map.move(CameraPosition(p0.position, 20.0f, 0.0f, 0.0f),
+    //                Animation(Animation.Type.SMOOTH, 3f), null)
+    //        }
+    //        override fun onLocationStatusUpdated(p0: LocationStatus) {
+    //            Log.d("Tag", "onStatusUpdated")
+    //        }
+    //    }
+    //    locMan.requestSingleUpdate(locLis)
+    //}
 
     private fun checkPerm() {
         var alertText = ""
@@ -373,23 +382,24 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
 
     fun onClickConfirm(view: View) {
         lastCarPoint = mapview.map.cameraPosition.target
-
         setParkingImgVisibility(View.GONE)
         findViewById<ConstraintLayout>(R.id.constrDescrInput).visibility = View.VISIBLE
         findViewById<TextInputEditText>(R.id.descrTextInput).setText("")
         findViewById<Button>(R.id.button3).setText(R.string.save)
         findViewById<ImageView>(R.id.imageView7).setImageResource(R.drawable.img_default_photo)
+        addCarOnMap()
+    }
+
+    private fun addCarOnMap() {
         var carBitMap = BitmapFactory.decodeResource(resources, R.drawable.img_car_point)
         carBitMap = Bitmap.createScaledBitmap(carBitMap, 80, 80, false)
-        if (state) {
+        if (isCarOnMap) {
             car.parent.remove(car)
         }
-        val der = mapview.map.mapObjects.addPlacemark(lastCarPoint, ImageProvider.fromBitmap(carBitMap))
-        der.addTapListener(tapLis)
-        car = der
-        state = true
-
-
+        val newCar = mapview.map.mapObjects.addPlacemark(lastCarPoint, ImageProvider.fromBitmap(carBitMap))
+        newCar.addTapListener(tapLis)
+        car = newCar
+        isCarOnMap = true
     }
 
     fun onClickCancel(view: View) {
@@ -448,6 +458,8 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     }
 
     private fun createRoute(startPoint: Point, endPoint: Point) {
+        mapview.map.mapObjects.remove(mapObjects)
+        mapObjects = mapview.map.mapObjects.addCollection()
         val options = TimeOptions()
         val points = ArrayList<RequestPoint>()
         points.add(RequestPoint(startPoint, RequestPointType.WAYPOINT, null))
@@ -473,7 +485,9 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
 
     private fun drawSection(geometry: Polyline) {
         val polylineMapObject = mapObjects.addPolyline(geometry)
-        polylineMapObject.setStrokeColor(R.color.plot_color)
+        val colorInt = if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) 0xFFBFFF00.toInt()
+                        else 0xFF3381CC.toInt()
+        polylineMapObject.setStrokeColor(colorInt)
     }
 
 }
