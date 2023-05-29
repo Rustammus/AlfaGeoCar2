@@ -63,6 +63,7 @@ class ParkingHistoryActivity : AppCompatActivity() {
                 }
                 setEmptyInvis()
                 modelListGL = null
+                Log.d("Tag", "model is null")
             }
         }
         dialogBuilder.setNegativeButton(R.string.cancel) {_, _ ->}
@@ -91,11 +92,11 @@ class ParkingHistoryActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onDestroy() {
+    override fun finish() {
         val i = Intent()
         i.putExtra("modelListFromHistory", modelListGL)
         setResult(RESULT_OK, i)
-        super.onDestroy()
+        super.finish()
     }
 
 }

@@ -48,17 +48,19 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
                 Log.d("Tag", "Reverted from History")
-            }
+            } else Log.d("TagAAAA", result.resultCode.toString())
         }
         Log.d("Tag", "Settings onCreate")
     }
 
-
-
-    override fun onDestroy() {
+    override fun finish() {
         val i = Intent()
         i.putExtra("modelFromSet", modelList)
         setResult(RESULT_OK, i)
+        super.finish()
+    }
+
+    override fun onDestroy() {
         super.onDestroy()
         Log.d("Tag", "Settings destroyed")
     }
@@ -69,8 +71,8 @@ class SettingsActivity : AppCompatActivity() {
 
     fun onClickHistory(view: View) {
         val intent = Intent(this, ParkingHistoryActivity::class.java)
-        if (!modelList.isNullOrEmpty()) intent.putExtra("qwerty", modelList)
-        launcherHistory?.launch(intent)
+        intent.putExtra("qwerty", modelList)
+        launcherHistory!!.launch(intent)
     }
 
 

@@ -123,7 +123,10 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
                 }
                 else {
                     modelList.clear()
-                    if (isCarOnMap) car.parent.remove(car)
+                    if (isCarOnMap) {
+                        car.parent.remove(car)
+                        lastCarPoint = Point()
+                    }
                     Log.d("Tag", "modelList is clear")
                 }
                 saveModelList()
@@ -167,8 +170,6 @@ class MainActivity : AppCompatActivity(), Session.RouteListener {
     override fun onDestroy() {
         saveModelList()
         super.onDestroy()
-
-
     }
     private fun saveModelList() {
         val pref = getSharedPreferences("pref", MODE_PRIVATE).edit(commit = true) {
